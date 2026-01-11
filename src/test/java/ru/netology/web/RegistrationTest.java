@@ -34,27 +34,24 @@ public class RegistrationTest {
         LocalDate date = LocalDate.now();
         date = date.plusDays(3);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String formattedDate = date.format(formatter);
-        return formattedDate;
+        return date.format(formatter);
     }
     @Test
     void shouldRegisterByAccountNumberDOMModification() {
 
         String firstMeetingDate =  GenerateDate();
-        $(byCssSelector("[data-test-id='city'] input")).setValue("Москва");
-        $(byCssSelector("[data-test-id='date'] input")).press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE).setValue(firstMeetingDate);
-        $(byName("name")).setValue("Иванов Иван");
-
-        $(byName("phone")).setValue("+79309554618");
-        $(byName("agreement")).parent().click();
+        $("[data-test-id='city'] input").setValue("Москва");
+        $("[data-test-id='date'] input").press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        $("[data-test-id='date'] input").setValue(firstMeetingDate);
+        $("[data-test-id='name'] input").setValue("Поликарпова Светлана");
+        $("[data-test-id='phone'] input").setValue("+79309554618");
+        $("[data-test-id='agreement']").click();
         $$("button").find(exactText("Забронировать")).click();
-        String text = "Встреча успешно забронирована на "+firstMeetingDate;
 
         $(Selectors.withText("Успешно!")).shouldBe(visible,Duration.ofSeconds(15));
         $("[data-test-id='notification'] .notification__content")
                 .shouldHave(exactText("Встреча успешно забронирована на " + firstMeetingDate))
                 .shouldBe(visible);
-
     }
 
 
