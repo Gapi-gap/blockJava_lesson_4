@@ -1,6 +1,7 @@
 package ru.netology.web;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,18 +40,21 @@ public class RegistrationTest {
     @Test
     void shouldRegisterByAccountNumberDOMModification() {
 
-        String date =  GenerateDate();
+        String firstMeetingDate =  GenerateDate();
         $(byCssSelector("[data-test-id='city'] input")).setValue("Москва");
-        $(byCssSelector("[data-test-id='date'] input")).press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE).setValue(date);
+        $(byCssSelector("[data-test-id='date'] input")).press(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE).setValue(firstMeetingDate);
         $(byName("name")).setValue("Иванов Иван");
 
         $(byName("phone")).setValue("+79309554618");
         $(byName("agreement")).parent().click();
         $$("button").find(exactText("Забронировать")).click();
-        String text = "Встреча успешно забронирована на "+date;
+        String text = "Встреча успешно забронирована на "+firstMeetingDate;
 
-        $(".notification__content").should(Condition.visible, Duration.ofSeconds(15))
-                .should(Condition.text(text));
+        $(Selectors.withText("Успешно!")).shouldBe(visible,Duration.ofSeconds(15));
+        $("[data-test-id='notification'] .notification__content")
+                .shouldHave(exactText("Встреча успешно забронирована на " + firstMeetingDate))
+                .shouldBe(visible);
+
     }
 
 
